@@ -110,12 +110,33 @@ function marcasPadrao() {
   ];
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────────
 // Aba "Acoes" — detalhamento de cada ação de CRM
-// ──────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────────
 function lerAcoes(planilha) {
   var aba = planilha.getSheetByName("Acoes");
   if (!aba) return [];
+
+  // Monta um mapa de nome da marca → marca_id para conversão automática
+  // Aceita tanto o nome (ex: "GMSP") quanto o ID (ex: "marca-a")
+  var todasMarcas = lerMarcas(planilha);
+  var mapaDeNome = {};
+  var mapaDeId   = {};
+  todasMarcas.forEach(function(m) {
+    mapaDeNome[m.nome.toLowerCase().trim()] = m.marca_id;
+    mapaDeId[m.marca_id.toLowerCase().trim()] = m.marca_id;
+  });
+
+  function resolverMarcaId(valor) {
+    var v = String(valor).trim();
+    var vLower = v.toLowerCase();
+    // Se já é um ID válido (ex: "marca-a"), retorna direto
+    if (mapaDeId[vLower]) return mapaDeId[vLower];
+    // Se é um nome (ex: "GMSP"), converte para o ID
+    if (mapaDeNome[vLower]) return mapaDeNome[vLower];
+    // Fallback: retorna o valor original
+    return v;
+  }
 
   var dados = aba.getDataRange().getValues();
   var acoes = [];
@@ -126,7 +147,7 @@ function lerAcoes(planilha) {
     acoes.push({
       id:          Number(linha[0])          || i,
       nome:        String(linha[1]).trim(),
-      marca_id:    String(linha[2]).trim(),
+      marca_id:    resolverMarcaId(linha[2]),
       tipo:        String(linha[3]).trim(),
       fonte:       String(linha[4]).trim(),
       status:      String(linha[5]).trim(),
