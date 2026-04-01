@@ -452,6 +452,21 @@ function inicializar() {
   renderAll();
 }
 
+// ─── Marcas padrão (usadas enquanto os dados da planilha não carregam) ────
+// Estas marcas são sobrescritas pelos dados do Google Sheets após o carregamento.
+DATA.marcas = [
+  { marca_id: "marca-a", nome: "GMSP",           cor: "#6C5CE7" },
+  { marca_id: "marca-b", nome: "GMBSB",          cor: "#00D68F" },
+  { marca_id: "marca-c", nome: "Volkswagen",      cor: "#48DBFB" },
+  { marca_id: "marca-d", nome: "GAC",             cor: "#FF9FF3" },
+  { marca_id: "marca-e", nome: "GWM",             cor: "#FECA57" },
+  { marca_id: "marca-f", nome: "Omoda & Jaecoo",  cor: "#FF6B6B" },
+  { marca_id: "marca-g", nome: "Zeekr",           cor: "#A29BFE" },
+  { marca_id: "marca-h", nome: "Bajaj",           cor: "#FD79A8" },
+  { marca_id: "marca-i", nome: "Seminovos",       cor: "#55EFC4" },
+  { marca_id: "marca-j", nome: "Nissan",          cor: "#74B9FF" }
+];
+
 // ─── Start ────────────────────────────────────────────────────────────────
 carregarDados();
 

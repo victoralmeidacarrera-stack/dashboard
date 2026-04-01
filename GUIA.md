@@ -49,8 +49,14 @@ Esta aba lista as marcas/empresas que aparecem nos filtros.
 |---|---|---|
 | marca-a | GMSP | #6C5CE7 |
 | marca-b | GMBSB | #00D68F |
-| marca-c | VOLKSWAGEN | #48DBFB |
+| marca-c | Volkswagen | #48DBFB |
 | marca-d | GAC | #FF9FF3 |
+| marca-e | GWM | #FECA57 |
+| marca-f | Omoda & Jaecoo | #FF6B6B |
+| marca-g | Zeekr | #A29BFE |
+| marca-h | Bajaj | #FD79A8 |
+| marca-i | Seminovos | #55EFC4 |
+| marca-j | Nissan | #74B9FF |
 
 > **Dica:** A coluna `cor` usa código hexadecimal de cor. Você pode escolher qualquer cor em [htmlcolorcodes.com](https://htmlcolorcodes.com).
 
@@ -82,6 +88,7 @@ Esta é a aba principal onde você registra cada ação de CRM.
 | `receita` | Receita gerada (pode deixar 0) |
 | `custo` | Custo da ação (pode deixar 0) |
 | `texto_envio` | O texto que foi enviado na mensagem |
+| `data` | Data da ação no formato `dd/mm/aaaa` (usado no resumo diário) |
 
 ---
 
@@ -178,6 +185,71 @@ dashboard/
 ├── GUIA.md                 ← Este guia
 └── apps-script/
     └── Codigo.gs           ← Código para colar no Google Apps Script
+```
+
+---
+
+---
+
+## Resumo diário para WhatsApp
+
+O Apps Script possui uma função chamada `gerarResumoDiario` que monta automaticamente um texto formatado com os principais números do dia anterior, pronto para colar no WhatsApp.
+
+### Como usar manualmente
+
+1. Abra o Apps Script da sua planilha (**Extensões → Apps Script**).
+2. No menu suspenso ao lado do botão **▶ Executar**, selecione `gerarResumoDiario`.
+3. Clique em **▶ Executar**.
+4. Uma janela vai aparecer com o texto pronto. Copie e cole no WhatsApp.
+5. O texto também fica salvo na aba **"Resumo Diário"** da planilha para consulta futura.
+
+### Como configurar para rodar automaticamente todo dia às 8h
+
+1. No editor do Apps Script, clique no ícone de **relógio** (Gatilhos) no menu lateral esquerdo.
+2. Clique em **+ Adicionar gatilho** (botão azul no canto inferior direito).
+3. Preencha:
+   - **Função a executar:** `gerarResumoDiario`
+   - **Origem do evento:** Baseado no tempo
+   - **Tipo de gatilho de tempo:** Temporizador por dia
+   - **Hora do dia:** 8h – 9h
+4. Clique em **Salvar**.
+
+A partir daí, todo dia às 8h o resumo do dia anterior será gerado e salvo automaticamente na aba **"Resumo Diário"**.
+
+### Como o resumo identifica o "dia anterior"
+
+O resumo filtra as ações pela coluna **`data`** (coluna O da aba `Acoes`). Portanto, ao registrar uma ação, preencha essa coluna com a data em que ela foi realizada. O formato aceito é `dd/mm/aaaa` ou `aaaa-mm-dd`.
+
+Se nenhuma ação tiver data preenchida, o resumo exibirá os totais gerais do mês como alternativa.
+
+### Exemplo do texto gerado
+
+```
+📊 *RESUMO CRM — 31/03/2026*
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+*📬 Totais do período*
+• Ações realizadas: *3*
+• Mensagens enviadas: *18.5K*
+• Mensagens entregues: *15.2K* (82.2%)
+• Conversões: *620* (3.4%)
+
+*📡 Por canal*
+💬 WhatsApp: 10.0K envios → 320 conv. (3.2%)
+📧 E-mail: 8.5K envios → 300 conv. (3.5%)
+
+*🏷️ Por marca*
+• GMSP: 8.0K env. | 280 conv. (3.5%)
+• Volkswagen: 6.5K env. | 220 conv. (3.4%)
+• GAC: 4.0K env. | 120 conv. (3.0%)
+
+*🏆 Destaque do dia*
+"Campanha Primavera GMSP"
+• 8.0K enviadas → 280 conversões (3.5%)
+• Fonte: WhatsApp Manager | Canal: WhatsApp
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+_Gerado automaticamente pelo CRM Dashboard_
 ```
 
 ---
