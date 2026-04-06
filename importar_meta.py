@@ -34,12 +34,15 @@ PASTA_ZIPS = "./zips"
 
 def extrair_nome_modelo(nome_arquivo):
     """
-    Extrai o nome do modelo/campanha a partir do nome do arquivo CSV.
-    Exemplo: 'insights_2026-04-01_to_2026-04-06.csv' → 'Campanha 2026-04-01'
-    Tenta extrair a data de início como referência do disparo.
+    Usa o nome do arquivo CSV como nome do modelo/campanha.
+    Exemplo: 'TRACKER.csv' → 'TRACKER'
+    Se o arquivo ainda tiver o nome padrão do Meta (insights_...), usa a data de início.
     """
     nome = Path(nome_arquivo).stem  # Remove extensão
-    # Tenta extrair a data de início do nome do arquivo
+    # Se o arquivo foi renomeado pelo usuário (não começa com 'insights_'), usa o nome diretamente
+    if not nome.lower().startswith('insights_'):
+        return nome
+    # Fallback para arquivos com nome padrão do Meta: usa a data de início
     match = re.search(r'insights_(\d{4}-\d{2}-\d{2})_to_', nome)
     if match:
         data_inicio = match.group(1)
