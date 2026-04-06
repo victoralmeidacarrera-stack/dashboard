@@ -140,13 +140,16 @@ function lerAcoes(planilha) {
 
   var dados = aba.getDataRange().getValues();
   var acoes = [];
+  var contador = 1;
 
   for (var i = 1; i < dados.length; i++) {
     var linha = dados[i];
-    if (!linha[0]) continue;
+    // Usa o nome da ação (coluna B) como critério principal — id é opcional
+    var nomeAcao = String(linha[1] || "").trim();
+    if (!nomeAcao) continue;
     acoes.push({
-      id:          Number(linha[0])          || i,
-      nome:        String(linha[1]).trim(),
+      id:          Number(linha[0]) || contador++,
+      nome:        nomeAcao,
       marca_id:    resolverMarcaId(linha[2]),
       tipo:        String(linha[3]).trim(),
       fonte:       String(linha[4]).trim(),
