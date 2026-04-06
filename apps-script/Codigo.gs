@@ -7,14 +7,131 @@
 var SPREADSHEET_ID = "1CF4JE6wP21AiQMjV8H4uNgv6aU0kMAP6n0F0qRBPjEs";
 
 // ──────────────────────────────────────────────────────────────────────────
-// Função principal — responde às requisições do dashboard
+// doPost — recebe dados do script Python de importação do Meta
+// ──────────────────────────────────────────────────────────────────────────
+function doPost(e) {
+  try {
+    var payload = JSON.parse(e.postData.contents);
+
+    if (payload.action === 'importar') {
+      var resultado = importarRegistros(payload.registros);
+      var resposta = ContentService.createTextOutput(
+        JSON.stringify({ sucesso: true, mensagem: resultado })
+      );
+      resposta.setMimeType(ContentService.MimeType.JSON);
+      return resposta;
+    }
+
+    var resposta = ContentService.createTextOutput(
+      JSON.stringify({ sucesso: false, erro: 'Ação desconhecida: ' + payload.action })
+    );
+    resposta.setMimeType(ContentService.MimeType.JSON);
+    return resposta;
+
+  } catch (erro) {
+    var resposta = ContentService.createTextOutput(
+      JSON.stringify({ sucesso: false, erro: erro.toString() })
+    );
+    resposta.setMimeType(ContentService.MimeType.JSON);
+    return resposta;
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// importarRegistros — insere ou atualiza linhas na aba Acoes
+// ──────────────────────────────────────────────────────────────────────────
+function importarRegistros(registros) {
+  var planilha = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var aba = planilha.getSheetByName("Acoes");
+  if (!aba) {
+    aba = planilha.insertSheet("Acoes");
+    aba.appendRow(["id","nome","marca","tipo","status","enviadas","entregues","cliques","texto_envio","data","cliques_parar"]);
+  }
+
+  var inseridos = 0;
+  var atualizados = 0;
+
+  // Ler dados existentes para verificar duplicatas
+  var dadosExistentes = aba.getDataRange().getValues();
+  var cabecalho = dadosExistentes[0];
+  var idxNome   = cabecalho.indexOf("nome");
+  var idxMarca  = cabecalho.indexOf("marca");
+  var idxData   = cabecalho.indexOf("data");
+  if (idxNome   < 0) idxNome  = 1;
+  if (idxMarca  < 0) idxMarca = 2;
+  if (idxData   < 0) idxData  = 9;
+
+  registros.forEach(function(reg) {
+    // Verificar se já existe um registro com mesmo nome + marca + data
+    var linhaExistente = -1;
+    for (var i = 1; i < dadosExistentes.length; i++) {
+      var nomeExist  = String(dadosExistentes[i][idxNome]  || "").trim().toLowerCase();
+      var marcaExist = String(dadosExistentes[i][idxMarca] || "").trim().toLowerCase();
+      var dataExist  = String(dadosExistentes[i][idxData]  || "").trim();
+      if (
+        nomeExist  === String(reg.nome  || "").trim().toLowerCase() &&
+        marcaExist === String(reg.marca || "").trim().toLowerCase() &&
+        dataExist  === String(reg.data  || "").trim()
+      ) {
+        linhaExistente = i + 1; // +1 porque getValues é 0-indexed mas Sheets é 1-indexed
+        break;
+      }
+    }
+
+    var novaLinha = [
+      "",                              // id (deixar vazio — opcional)
+      reg.nome        || "",
+      reg.marca       || "",
+      reg.tipo        || "WhatsApp",
+      reg.status      || "concluida",
+      reg.enviadas    || 0,
+      reg.entregues   || 0,
+      reg.cliques     || 0,
+      reg.mensagem    || "",
+      reg.data        || "",
+      reg.cliques_parar || 0
+    ];
+
+    if (linhaExistente > 0) {
+      // Atualizar linha existente
+      aba.getRange(linhaExistente, 1, 1, novaLinha.length).setValues([novaLinha]);
+      atualizados++;
+    } else {
+      // Inserir nova linha
+      aba.appendRow(novaLinha);
+      inseridos++;
+    }
+  });
+
+  return inseridos + " registro(s) inserido(s), " + atualizados + " atualizado(s).";
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Função principal — responde às requisições GET (dashboard + importação)
 // ──────────────────────────────────────────────────────────────────────────
 function doGet(e) {
   try {
+    var params = e && e.parameter ? e.parameter : {};
+
+    // Modo importação: ?action=importar&data=<JSON_BASE64>
+    if (params.action === 'importar' && params.data) {
+      var registros = JSON.parse(
+        Utilities.newBlob(Utilities.base64Decode(params.data)).getDataAsString()
+      );
+      var resultado = importarRegistros(registros);
+      var resposta = ContentService.createTextOutput(
+        JSON.stringify({ sucesso: true, mensagem: resultado })
+      );
+      resposta.setMimeType(ContentService.MimeType.JSON);
+      return resposta;
+    }
+
+    // Modo padrão: retorna dados para o dashboard
     var dados = lerDados();
     var resposta = ContentService.createTextOutput(JSON.stringify(dados));
     resposta.setMimeType(ContentService.MimeType.JSON);
     return resposta;
+
   } catch (erro) {
     var mensagemErro = ContentService.createTextOutput(JSON.stringify({ erro: erro.toString() }));
     mensagemErro.setMimeType(ContentService.MimeType.JSON);
