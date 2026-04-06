@@ -1,12 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════
 // 📊 CRM Dashboard — Google Apps Script
 // Cole este código no Apps Script da sua planilha Google Sheets
-// Instruções completas no arquivo GUIA.md
 // ══════════════════════════════════════════════════════════════════════════
 
-// ID da sua planilha — substitua pelo ID real
-// O ID fica na URL: docs.google.com/spreadsheets/d/SEU_ID_AQUI/edit
-var SPREADSHEET_ID = "SEU_ID_DA_PLANILHA_AQUI";
+// ID da sua planilha (já configurado)
+var SPREADSHEET_ID = "1CF4JE6wP21AiQMjV8H4uNgv6aU0kMAP6n0F0qRBPjEs";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Função principal — responde às requisições do dashboard
@@ -29,15 +27,10 @@ function doGet(e) {
 // ──────────────────────────────────────────────────────────────────────────
 function lerDados() {
   var planilha = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-  var config = lerConfig(planilha);
-  var marcas = lerMarcas(planilha);
-  var acoes  = lerAcoes(planilha);
-
   return {
-    config: config,
-    marcas: marcas,
-    acoes:  acoes
+    config: lerConfig(planilha),
+    marcas: lerMarcas(planilha),
+    acoes:  lerAcoes(planilha)
   };
 }
 
@@ -50,7 +43,6 @@ function lerConfig(planilha) {
 
   var dados = aba.getDataRange().getValues();
   var config = {};
-
   for (var i = 1; i < dados.length; i++) {
     var chave = dados[i][0];
     var valor = dados[i][1];
@@ -58,15 +50,16 @@ function lerConfig(planilha) {
   }
 
   return {
-    mes_atual:           config["mes_atual"]        || "",
-    data_inicio:         config["data_inicio"]      || "",
-    data_fim:            config["data_fim"]         || "",
-    ultima_atualizacao:  new Date().toLocaleDateString("pt-BR"),
+    mes_atual:          config["mes_atual"]           || "",
+    data_inicio:        config["data_inicio"]         || "",
+    data_fim:           config["data_fim"]            || "",
+    ultima_atualizacao: new Date().toLocaleDateString("pt-BR"),
     mes_anterior: {
-      total_acoes:    Number(config["ant_total_acoes"])    || 0,
-      alcance_total:  Number(config["ant_alcance_total"])  || 0,
-      taxa_conversao: Number(config["ant_taxa_conversao"]) || 0,
-      roi_medio:      Number(config["ant_roi_medio"])      || 0
+      total_acoes:      Number(config["ant_total_acoes"])      || 0,
+      total_enviadas:   Number(config["ant_total_enviadas"])   || 0,
+      total_entregues:  Number(config["ant_total_entregues"])  || 0,
+      total_cliques:    Number(config["ant_total_cliques"])    || 0,
+      taxa_conversao:   Number(config["ant_taxa_conversao"])   || 0
     }
   };
 }
@@ -80,7 +73,6 @@ function lerMarcas(planilha) {
 
   var dados = aba.getDataRange().getValues();
   var marcas = [];
-
   for (var i = 1; i < dados.length; i++) {
     var linha = dados[i];
     if (!linha[0]) continue;
@@ -90,38 +82,45 @@ function lerMarcas(planilha) {
       cor:      String(linha[2]).trim() || "#6C5CE7"
     });
   }
-
   return marcas.length > 0 ? marcas : marcasPadrao();
 }
 
-// Lista padrão de marcas (usada se a aba Marcas estiver vazia)
 function marcasPadrao() {
   return [
-    { marca_id: "marca-a", nome: "GMSP",          cor: "#6C5CE7" },
-    { marca_id: "marca-b", nome: "GMBSB",         cor: "#00D68F" },
-    { marca_id: "marca-c", nome: "Volkswagen",     cor: "#48DBFB" },
-    { marca_id: "marca-d", nome: "GAC",            cor: "#FF9FF3" },
-    { marca_id: "marca-e", nome: "GWM",            cor: "#FECA57" },
-    { marca_id: "marca-f", nome: "Omoda & Jaecoo", cor: "#FF6B6B" },
-    { marca_id: "marca-g", nome: "Zeekr",          cor: "#A29BFE" },
-    { marca_id: "marca-h", nome: "Bajaj",          cor: "#FD79A8" },
-    { marca_id: "marca-i", nome: "Seminovos",      cor: "#55EFC4" },
-    { marca_id: "marca-j", nome: "Nissan",         cor: "#74B9FF" }
+    { marca_id: "marca-a", nome: "GMSP",           cor: "#6C5CE7" },
+    { marca_id: "marca-b", nome: "GMBSB",          cor: "#00D68F" },
+    { marca_id: "marca-c", nome: "Volkswagen",      cor: "#48DBFB" },
+    { marca_id: "marca-d", nome: "GAC",             cor: "#FF9FF3" },
+    { marca_id: "marca-e", nome: "GWM",             cor: "#FECA57" },
+    { marca_id: "marca-f", nome: "Omoda & Jaecoo",  cor: "#FF6B6B" },
+    { marca_id: "marca-g", nome: "Zeekr",           cor: "#A29BFE" },
+    { marca_id: "marca-h", nome: "Bajaj",           cor: "#FD79A8" },
+    { marca_id: "marca-i", nome: "Seminovos",       cor: "#55EFC4" },
+    { marca_id: "marca-j", nome: "Nissan",          cor: "#74B9FF" }
   ];
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────
 // Aba "Acoes" — detalhamento de cada ação de CRM
-// ──────────────────────────────────────────────────────────────────────────────
+//
+// Colunas esperadas na planilha:
+//   A: id (opcional)
+//   B: nome (modelo/nome da mensagem) ← critério principal
+//   C: marca
+//   D: tipo (WhatsApp, E-mail, SMS)
+//   E: status (concluida, ativa, planejada)
+//   F: enviadas
+//   G: entregues
+//   H: cliques (excluindo "Parar promoções")
+//   I: texto_envio
+//   J: data (yyyy-mm-dd)
+// ──────────────────────────────────────────────────────────────────────────
 function lerAcoes(planilha) {
   var aba = planilha.getSheetByName("Acoes");
   if (!aba) return [];
 
-  // Monta um mapa de nome da marca → marca_id para conversão automática
-  // Aceita tanto o nome (ex: "GMSP") quanto o ID (ex: "marca-a")
   var todasMarcas = lerMarcas(planilha);
-  var mapaDeNome = {};
-  var mapaDeId   = {};
+  var mapaDeNome = {}, mapaDeId = {};
   todasMarcas.forEach(function(m) {
     mapaDeNome[m.nome.toLowerCase().trim()] = m.marca_id;
     mapaDeId[m.marca_id.toLowerCase().trim()] = m.marca_id;
@@ -130,11 +129,8 @@ function lerAcoes(planilha) {
   function resolverMarcaId(valor) {
     var v = String(valor).trim();
     var vLower = v.toLowerCase();
-    // Se já é um ID válido (ex: "marca-a"), retorna direto
-    if (mapaDeId[vLower]) return mapaDeId[vLower];
-    // Se é um nome (ex: "GMSP"), converte para o ID
+    if (mapaDeId[vLower])   return mapaDeId[vLower];
     if (mapaDeNome[vLower]) return mapaDeNome[vLower];
-    // Fallback: retorna o valor original
     return v;
   }
 
@@ -144,25 +140,29 @@ function lerAcoes(planilha) {
 
   for (var i = 1; i < dados.length; i++) {
     var linha = dados[i];
-    // Usa o nome da ação (coluna B) como critério principal — id é opcional
     var nomeAcao = String(linha[1] || "").trim();
     if (!nomeAcao) continue;
+
+    var dataVal = "";
+    if (linha[9]) {
+      try {
+        dataVal = Utilities.formatDate(new Date(linha[9]), Session.getScriptTimeZone(), "yyyy-MM-dd");
+      } catch(e) {
+        dataVal = String(linha[9]).trim();
+      }
+    }
+
     acoes.push({
       id:          Number(linha[0]) || contador++,
       nome:        nomeAcao,
       marca_id:    resolverMarcaId(linha[2]),
-      tipo:        String(linha[3]).trim(),
-      fonte:       String(linha[4]).trim(),
-      status:      String(linha[5]).trim(),
-      semana:      String(linha[6]).trim(),
-      envios:      Number(linha[7])  || 0,
-      aberturas:   Number(linha[8])  || 0,
-      cliques:     Number(linha[9])  || 0,
-      conversoes:  Number(linha[10]) || 0,
-      receita:     Number(linha[11]) || 0,
-      custo:       Number(linha[12]) || 0,
-      texto_envio: String(linha[13] || "").trim(),
-      data:        linha[14] ? Utilities.formatDate(new Date(linha[14]), Session.getScriptTimeZone(), "yyyy-MM-dd") : ""
+      tipo:        String(linha[3] || "WhatsApp").trim(),
+      status:      String(linha[4] || "concluida").trim(),
+      enviadas:    Number(linha[5])  || 0,
+      entregues:   Number(linha[6])  || 0,
+      cliques:     Number(linha[7])  || 0,
+      texto_envio: String(linha[8]  || "").trim(),
+      data:        dataVal
     });
   }
 
@@ -171,120 +171,81 @@ function lerAcoes(planilha) {
 
 // ══════════════════════════════════════════════════════════════════════════
 // 📱 RESUMO DIÁRIO PARA WHATSAPP
-// ══════════════════════════════════════════════════════════════════════════
 //
 // Como usar:
-//   1. No editor do Apps Script, selecione a função "gerarResumoDiario"
-//      no menu suspenso ao lado do botão ▶ Executar.
+//   1. No editor do Apps Script, selecione "gerarResumoDiario" no menu
+//      suspenso ao lado do botão ▶ Executar.
 //   2. Clique em ▶ Executar.
-//   3. O resumo será salvo na aba "Resumo Diário" da planilha.
-//   4. Copie o texto gerado e cole no WhatsApp.
+//   3. O resumo será salvo na aba "Resumo Diário" e exibido em tela.
+//   4. Copie o texto e cole no WhatsApp.
 //
-// Alternativamente, configure um gatilho automático para rodar todo dia
-// às 8h da manhã (veja instruções no GUIA.md).
+// O resumo contém: modelo do carro disparado + taxa de conversão + cliques.
 // ══════════════════════════════════════════════════════════════════════════
-
 function gerarResumoDiario() {
   var planilha = SpreadsheetApp.openById(SPREADSHEET_ID);
   var acoes    = lerAcoes(planilha);
   var marcas   = lerMarcas(planilha);
   var config   = lerConfig(planilha);
 
-  // Calcula a data de ontem
+  // Data de ontem
   var ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
-  var dataOntemStr = Utilities.formatDate(ontem, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  var dataOntemStr      = Utilities.formatDate(ontem, Session.getScriptTimeZone(), "yyyy-MM-dd");
   var dataOntemExibicao = Utilities.formatDate(ontem, Session.getScriptTimeZone(), "dd/MM/yyyy");
 
-  // Filtra as ações do dia anterior
-  // Critério: campo "data" (coluna O da aba Acoes) igual a ontem
-  var acoesOntem = acoes.filter(function(a) {
-    return a.data === dataOntemStr;
-  });
-
-  // Se não houver ações com data preenchida, usa todas as ações do mês como fallback
+  // Filtra ações do dia anterior
+  var acoesOntem = acoes.filter(function(a) { return a.data === dataOntemStr; });
   var usandoFallback = false;
   if (acoesOntem.length === 0) {
     acoesOntem = acoes;
     usandoFallback = true;
   }
 
-  // Totais gerais
-  var totalEnvios     = acoesOntem.reduce(function(s, a) { return s + a.envios; }, 0);
-  var totalEntregues  = acoesOntem.reduce(function(s, a) { return s + a.aberturas; }, 0);
-  var totalConversoes = acoesOntem.reduce(function(s, a) { return s + a.conversoes; }, 0);
-  var taxaEntrega     = totalEnvios > 0 ? (totalEntregues / totalEnvios * 100).toFixed(1) : "0.0";
-  var taxaConversao   = totalEnvios > 0 ? (totalConversoes / totalEnvios * 100).toFixed(1) : "0.0";
+  // Totais
+  var totalEnviadas  = acoesOntem.reduce(function(s, a) { return s + a.enviadas;  }, 0);
+  var totalEntregues = acoesOntem.reduce(function(s, a) { return s + a.entregues; }, 0);
+  var totalCliques   = acoesOntem.reduce(function(s, a) { return s + a.cliques;   }, 0);
+  var taxaConversao  = totalEntregues > 0 ? (totalCliques / totalEntregues * 100).toFixed(1) : "0.0";
 
-  // Melhor ação do dia
-  var melhorAcao = acoesOntem.slice().sort(function(a, b) { return b.conversoes - a.conversoes; })[0];
-
-  // Resumo por marca
-  var resumoPorMarca = marcas.map(function(m) {
-    var acoesM = acoesOntem.filter(function(a) { return a.marca_id === m.marca_id; });
-    var envM   = acoesM.reduce(function(s, a) { return s + a.envios; }, 0);
-    var entM   = acoesM.reduce(function(s, a) { return s + a.aberturas; }, 0);
-    var convM  = acoesM.reduce(function(s, a) { return s + a.conversoes; }, 0);
-    return { nome: m.nome, envios: envM, entregues: entM, conversoes: convM, qtdAcoes: acoesM.length };
-  }).filter(function(m) { return m.qtdAcoes > 0; });
-
-  // Resumo por canal (tipo)
-  var canais = ["WhatsApp", "E-mail", "SMS", "Push"];
-  var resumoPorCanal = canais.map(function(canal) {
-    var acoesC = acoesOntem.filter(function(a) { return a.tipo === canal; });
-    var envC   = acoesC.reduce(function(s, a) { return s + a.envios; }, 0);
-    var convC  = acoesC.reduce(function(s, a) { return s + a.conversoes; }, 0);
-    return { canal: canal, envios: envC, conversoes: convC, qtdAcoes: acoesC.length };
-  }).filter(function(c) { return c.qtdAcoes > 0; });
-
-  // ── Monta o texto formatado para WhatsApp ──────────────────────────────
+  // ── Monta o texto formatado ────────────────────────────────────────────
   var linhas = [];
+  var titulo = usandoFallback ? (config.mes_atual || "Período Atual") : dataOntemExibicao;
 
-  linhas.push("📊 *RESUMO CRM — " + (usandoFallback ? config.mes_atual || "Mês Atual" : dataOntemExibicao) + "*");
+  linhas.push("📊 *RESUMO CRM — " + titulo + "*");
   linhas.push("━━━━━━━━━━━━━━━━━━━━━━━━");
   linhas.push("");
 
   if (usandoFallback) {
-    linhas.push("_⚠️ Nenhuma ação encontrada com data de ontem. Exibindo resumo geral do mês._");
+    linhas.push("_⚠️ Sem ações com data de ontem. Exibindo resumo geral do período._");
     linhas.push("");
   }
 
-  // Totais
-  linhas.push("*📬 Totais do período*");
-  linhas.push("• Ações realizadas: *" + acoesOntem.length + "*");
-  linhas.push("• Mensagens enviadas: *" + formatarNumero(totalEnvios) + "*");
-  linhas.push("• Mensagens entregues: *" + formatarNumero(totalEntregues) + "* (" + taxaEntrega + "%)");
-  linhas.push("• Conversões: *" + formatarNumero(totalConversoes) + "* (" + taxaConversao + "%)");
+  // Totais gerais
+  linhas.push("*📬 Totais*");
+  linhas.push("• Ações: *" + acoesOntem.length + "*");
+  linhas.push("• Enviadas: *" + formatarNumero(totalEnviadas) + "*");
+  linhas.push("• Entregues: *" + formatarNumero(totalEntregues) + "*");
+  linhas.push("• Cliques: *" + formatarNumero(totalCliques) + "*");
+  linhas.push("• Taxa de conversão: *" + taxaConversao + "%*");
   linhas.push("");
 
-  // Por canal
-  if (resumoPorCanal.length > 0) {
-    linhas.push("*📡 Por canal*");
-    resumoPorCanal.forEach(function(c) {
-      var emoji = c.canal === "WhatsApp" ? "💬" : c.canal === "E-mail" ? "📧" : c.canal === "SMS" ? "📱" : "🔔";
-      var txC = c.envios > 0 ? (c.conversoes / c.envios * 100).toFixed(1) : "0.0";
-      linhas.push(emoji + " " + c.canal + ": " + formatarNumero(c.envios) + " envios → " + formatarNumero(c.conversoes) + " conv. (" + txC + "%)");
+  // Detalhamento por modelo de mensagem (ação)
+  if (acoesOntem.length > 0) {
+    linhas.push("*🚗 Por modelo de mensagem*");
+    // Ordena por taxa de conversão (maior primeiro)
+    var acoesOrdenadas = acoesOntem.slice().sort(function(a, b) {
+      var tA = a.entregues > 0 ? a.cliques / a.entregues : 0;
+      var tB = b.entregues > 0 ? b.cliques / b.entregues : 0;
+      return tB - tA;
     });
-    linhas.push("");
-  }
 
-  // Por marca
-  if (resumoPorMarca.length > 0) {
-    linhas.push("*🏷️ Por marca*");
-    resumoPorMarca.forEach(function(m) {
-      var txM = m.envios > 0 ? (m.conversoes / m.envios * 100).toFixed(1) : "0.0";
-      linhas.push("• " + m.nome + ": " + formatarNumero(m.envios) + " env. | " + formatarNumero(m.conversoes) + " conv. (" + txM + "%)");
+    acoesOrdenadas.forEach(function(a) {
+      var taxa = a.entregues > 0 ? (a.cliques / a.entregues * 100).toFixed(1) : "0.0";
+      var marcaObj = marcas.find(function(m) { return m.marca_id === a.marca_id; });
+      var nomeMarca = marcaObj ? marcaObj.nome : a.marca_id;
+      linhas.push("• *" + a.nome + "* (" + nomeMarca + ")");
+      linhas.push("  Cliques: " + formatarNumero(a.cliques) + " | Conversão: " + taxa + "%");
     });
-    linhas.push("");
-  }
-
-  // Destaque do dia
-  if (melhorAcao && melhorAcao.conversoes > 0) {
-    var txMelhor = melhorAcao.envios > 0 ? (melhorAcao.conversoes / melhorAcao.envios * 100).toFixed(1) : "0.0";
-    linhas.push("*🏆 Destaque do dia*");
-    linhas.push("\"" + melhorAcao.nome + "\"");
-    linhas.push("• " + formatarNumero(melhorAcao.envios) + " enviadas → " + formatarNumero(melhorAcao.conversoes) + " conversões (" + txMelhor + "%)");
-    linhas.push("• Fonte: " + (melhorAcao.fonte || "—") + " | Canal: " + melhorAcao.tipo);
     linhas.push("");
   }
 
@@ -293,7 +254,7 @@ function gerarResumoDiario() {
 
   var textoFinal = linhas.join("\n");
 
-  // ── Salva na aba "Resumo Diário" da planilha ───────────────────────────
+  // ── Salva na aba "Resumo Diário" ──────────────────────────────────────
   var abaResumo = planilha.getSheetByName("Resumo Diário");
   if (!abaResumo) {
     abaResumo = planilha.insertSheet("Resumo Diário");
@@ -306,19 +267,16 @@ function gerarResumoDiario() {
 
   var ultimaLinha = abaResumo.getLastRow() + 1;
   abaResumo.getRange(ultimaLinha, 1).setValue(new Date());
-  abaResumo.getRange(ultimaLinha, 2).setValue(usandoFallback ? (config.mes_atual || "Mês Atual") : dataOntemExibicao);
+  abaResumo.getRange(ultimaLinha, 2).setValue(titulo);
   abaResumo.getRange(ultimaLinha, 3).setValue(textoFinal);
   abaResumo.getRange(ultimaLinha, 3).setWrap(true);
 
-  // Exibe uma janela com o texto gerado para facilitar a cópia
-  var ui = SpreadsheetApp.getUi();
-  ui.alert(
-    "✅ Resumo gerado com sucesso!",
-    "O texto foi salvo na aba \"Resumo Diário\".\n\n" +
-    "Acesse a aba, copie o conteúdo da coluna C e cole no WhatsApp.\n\n" +
-    "─────────────────────────────\n" +
-    textoFinal,
-    ui.ButtonSet.OK
+  // Exibe o texto gerado
+  SpreadsheetApp.getUi().alert(
+    "✅ Resumo gerado!",
+    "Texto salvo na aba \"Resumo Diário\".\nCopie o conteúdo da coluna C e cole no WhatsApp.\n\n" +
+    "─────────────────────────────\n" + textoFinal,
+    SpreadsheetApp.getUi().ButtonSet.OK
   );
 }
 

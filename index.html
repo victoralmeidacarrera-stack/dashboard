@@ -16,9 +16,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .header .badge{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent-light);background:rgba(108,92,231,.12);padding:4px 10px;border-radius:20px}
 .header-right{display:flex;align-items:center;gap:14px}
 .period-display{font-size:13px;color:var(--text-muted);padding:8px 16px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border)}
-.week-selector{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:var(--radius-sm);border:1px solid var(--border)}
-.week-btn{padding:6px 14px;font-size:12px;font-weight:500;font-family:var(--font-body);color:var(--text-muted);background:transparent;border:none;border-radius:6px;cursor:pointer;transition:all .2s}
-.week-btn:hover{color:var(--text)}.week-btn.active{background:var(--accent);color:#fff}
+/* Date range picker */
+.date-range{display:flex;align-items:center;gap:8px;background:var(--surface);padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.date-range label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim)}
+.date-range input[type="date"]{background:transparent;border:none;color:var(--text-muted);font-family:var(--font-body);font-size:13px;cursor:pointer;outline:none}
+.date-range input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:pointer}
+.date-range .sep{color:var(--text-dim);font-size:12px}
+.btn-filtrar{padding:6px 16px;font-size:12px;font-weight:600;font-family:var(--font-body);color:#fff;background:var(--accent);border:none;border-radius:6px;cursor:pointer;transition:all .2s}
+.btn-filtrar:hover{background:var(--accent-light)}
 .filters-bar{padding:16px 40px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .filter-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-right:6px}
 .brand-chip{padding:6px 16px;font-size:13px;font-weight:500;font-family:var(--font-body);color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:24px;cursor:pointer;transition:all .25s;user-select:none}
@@ -36,10 +41,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .empty-state.visible{display:flex}
 .empty-state h2{font-family:var(--font-display);font-size:20px;font-weight:500;color:var(--text-muted)}
 .empty-state p{font-size:14px;color:var(--text-dim);max-width:420px}
-.main{padding:28px 40px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px}
+.main{padding:28px 40px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:18px}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;flex-direction:column;gap:6px;transition:all .3s;position:relative;overflow:hidden}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kpi-card:nth-child(1)::before{background:var(--accent)}.kpi-card:nth-child(2)::before{background:var(--green)}.kpi-card:nth-child(3)::before{background:var(--amber)}.kpi-card:nth-child(4)::before{background:var(--blue)}
+.kpi-card:nth-child(1)::before{background:var(--accent)}
+.kpi-card:nth-child(2)::before{background:var(--green)}
+.kpi-card:nth-child(3)::before{background:var(--amber)}
+.kpi-card:nth-child(4)::before{background:var(--blue)}
+.kpi-card:nth-child(5)::before{background:var(--pink)}
 .kpi-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
 .kpi-value{font-family:var(--font-display);font-size:34px;font-weight:500;letter-spacing:-1px}
@@ -49,20 +58,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .panel-title{font-family:var(--font-display);font-size:17px;font-weight:500}.panel-subtitle{font-size:12px;color:var(--text-dim)}
 .chart-container{position:relative;height:240px}.chart-svg{width:100%;height:100%}
-.ranking-panel{grid-column:4/5;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.ranking-panel{grid-column:4/6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
 .rank-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.rank-item:last-child{border-bottom:none}
 .rank-num{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text-dim);width:28px;text-align:center}
 .rank-num.gold{color:var(--amber)}.rank-num.silver{color:#C0C0C0}.rank-num.bronze{color:#CD7F32}
 .rank-info{flex:1}.rank-name{font-size:13px;font-weight:600;margin-bottom:3px}.rank-brand{font-size:11px;color:var(--text-dim)}
 .rank-result{text-align:right}.rank-value{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--green)}.rank-metric{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
-.table-panel{grid-column:1/5;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;overflow-x:auto}
+.table-panel{grid-column:1/6;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;overflow-x:auto}
 .crm-table{width:100%;border-collapse:collapse;min-width:700px}
 .crm-table thead th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
 .crm-table tbody tr{transition:background .2s}.crm-table tbody tr:hover{background:var(--surface2)}
 .crm-table tbody td{padding:14px 12px;font-size:13px;color:var(--text-muted);border-bottom:1px solid rgba(42,47,58,.5)}
 .crm-table .action-name{font-weight:600;color:var(--text)}
-.status-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.status-tag.concluida{background:var(--green-dim);color:var(--green)}.status-tag.ativa{background:var(--blue-dim);color:var(--blue)}.status-tag.planejada{background:var(--amber-dim);color:var(--amber)}
 .bar-cell{display:flex;align-items:center;gap:8px}.mini-bar{width:80px;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}.mini-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
 /* Célula de texto do envio */
 .texto-envio{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text-muted)}
@@ -74,15 +81,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;line-height:1}
 .modal-title{font-family:var(--font-display);font-size:16px;font-weight:500;margin-bottom:12px}
 .modal-body{font-size:14px;line-height:1.7;color:var(--text-muted);white-space:pre-wrap}
-.donut-section{grid-column:1/3;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
-.donut-layout{display:flex;align-items:center;gap:30px}.donut-svg{width:180px;height:180px}
-.donut-legend{display:flex;flex-direction:column;gap:10px}.legend-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-muted)}.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}.legend-value{margin-left:auto;font-weight:600;color:var(--text);padding-left:20px}
-.brand-breakdown{grid-column:3/5;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.brand-breakdown{grid-column:1/3;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
 .brand-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(42,47,58,.4)}.brand-row:last-child{border-bottom:none}
-.brand-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.brand-label{font-size:13px;font-weight:500;width:120px}
+.brand-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.brand-label{font-size:13px;font-weight:500;width:130px}
 .brand-bar-track{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}.brand-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
 .brand-pct{font-size:13px;font-weight:600;width:50px;text-align:right}
-.insights-panel{grid-column:1/5;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.insights-panel{grid-column:3/6;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
 .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all .3s}
 .insight-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .insight-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px}
@@ -94,8 +98,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .animate-in{animation:fadeUp .5s ease forwards;opacity:0}
 .delay-1{animation-delay:.05s}.delay-2{animation-delay:.1s}.delay-3{animation-delay:.15s}.delay-4{animation-delay:.2s}.delay-5{animation-delay:.25s}.delay-6{animation-delay:.3s}.delay-7{animation-delay:.35s}.delay-8{animation-delay:.4s}
-@media(max-width:1100px){.main{grid-template-columns:1fr 1fr;padding:20px}.chart-panel,.ranking-panel,.table-panel,.donut-section,.brand-breakdown{grid-column:1/3}.insights-panel{grid-column:1/3;grid-template-columns:1fr}.header,.filters-bar{padding-left:20px;padding-right:20px}}
-@media(max-width:640px){.main{grid-template-columns:1fr;padding:16px}.chart-panel,.ranking-panel,.table-panel,.donut-section,.brand-breakdown{grid-column:1/2}.insights-panel{grid-column:1/2;grid-template-columns:1fr}.kpi-value{font-size:26px}.header{flex-direction:column;gap:12px;align-items:flex-start}.donut-layout{flex-direction:column}}
+@media(max-width:1200px){.main{grid-template-columns:1fr 1fr 1fr;padding:20px}.kpi-card{grid-column:auto}.chart-panel{grid-column:1/4}.ranking-panel{grid-column:1/4}.table-panel{grid-column:1/4}.brand-breakdown{grid-column:1/4}.insights-panel{grid-column:1/4;grid-template-columns:1fr 1fr}.header,.filters-bar{padding-left:20px;padding-right:20px}}
+@media(max-width:640px){.main{grid-template-columns:1fr;padding:16px}.kpi-card,.chart-panel,.ranking-panel,.table-panel,.brand-breakdown,.insights-panel{grid-column:1/2}.insights-panel{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start;gap:12px}.header-right{flex-wrap:wrap}.date-range{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -118,41 +122,118 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 <header class="header">
   <div class="header-left"><h1>CRM Dashboard</h1><span class="badge" id="badgeMes">—</span></div>
   <div class="header-right">
-    <div class="period-display" id="periodDisplay">📅 —</div>
-    <div class="week-selector">
-      <button class="week-btn" data-week="S1">S1</button>
-      <button class="week-btn" data-week="S2">S2</button>
-      <button class="week-btn" data-week="S3">S3</button>
-      <button class="week-btn" data-week="S4">S4</button>
-      <button class="week-btn active" data-week="all">Mês</button>
+    <div class="date-range">
+      <label>De</label>
+      <input type="date" id="dataInicio">
+      <span class="sep">→</span>
+      <label>Até</label>
+      <input type="date" id="dataFim">
+      <button class="btn-filtrar" onclick="aplicarFiltroData()">Filtrar</button>
     </div>
   </div>
 </header>
 
 <div class="filters-bar" id="filtersBar"><span class="filter-label">Marca</span><button class="brand-chip active" data-brand="all">Todas</button></div>
 <div class="error-banner" id="errorBanner"></div>
-<div class="empty-state" id="emptyState"><h2>Nenhuma ação encontrada</h2><p>Selecione outro filtro ou aguarde os dados serem preenchidos na planilha.</p></div>
+<div class="empty-state" id="emptyState"><h2>Nenhuma ação encontrada</h2><p>Selecione outro período ou marca, ou aguarde os dados serem preenchidos na planilha.</p></div>
 
 <main class="main" id="dashboard">
-  <div class="kpi-card animate-in delay-1" id="kpi-acoes"><span class="kpi-label">Ações realizadas</span><span class="kpi-value">—</span><span class="kpi-change neutral">—</span></div>
-  <div class="kpi-card animate-in delay-2" id="kpi-alcance"><span class="kpi-label">Alcance total</span><span class="kpi-value">—</span><span class="kpi-change neutral">—</span></div>
-  <div class="kpi-card animate-in delay-3" id="kpi-conversao"><span class="kpi-label">Taxa conversão</span><span class="kpi-value">—</span><span class="kpi-change neutral">—</span></div>
-  <div class="kpi-card animate-in delay-4" id="kpi-entrega"><span class="kpi-label">Taxa de entrega</span><span class="kpi-value">—</span><span class="kpi-change neutral">—</span></div>
-  <div class="chart-panel animate-in delay-5"><div class="panel-header"><div><div class="panel-title">Performance Semanal</div><div class="panel-subtitle">Envios vs. Conversões ao longo do mês</div></div></div><div class="chart-container"><svg class="chart-svg" id="lineChart" viewBox="0 0 700 240"></svg></div></div>
-  <div class="ranking-panel animate-in delay-6"><div class="panel-header"><div><div class="panel-title">Top Ações</div><div class="panel-subtitle">Maior resultado no período</div></div></div><div id="rankingList"></div></div>
+  <div class="kpi-card animate-in delay-1" id="kpi-acoes">
+    <span class="kpi-label">Ações Realizadas</span>
+    <span class="kpi-value">—</span>
+    <span class="kpi-change neutral">—</span>
+  </div>
+  <div class="kpi-card animate-in delay-2" id="kpi-enviadas">
+    <span class="kpi-label">Total de Envios</span>
+    <span class="kpi-value">—</span>
+    <span class="kpi-change neutral">—</span>
+  </div>
+  <div class="kpi-card animate-in delay-3" id="kpi-entregues">
+    <span class="kpi-label">Total Entregues</span>
+    <span class="kpi-value">—</span>
+    <span class="kpi-change neutral">—</span>
+  </div>
+  <div class="kpi-card animate-in delay-4" id="kpi-cliques">
+    <span class="kpi-label">Cliques no Botão</span>
+    <span class="kpi-value">—</span>
+    <span class="kpi-change neutral">—</span>
+  </div>
+  <div class="kpi-card animate-in delay-5" id="kpi-conversao">
+    <span class="kpi-label">Taxa de Conversão</span>
+    <span class="kpi-value">—</span>
+    <span class="kpi-change neutral">—</span>
+  </div>
+
+  <div class="chart-panel animate-in delay-5">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Performance por Período</div>
+        <div class="panel-subtitle">Envios vs. Cliques ao longo do tempo</div>
+      </div>
+    </div>
+    <div class="chart-container"><svg class="chart-svg" id="lineChart" viewBox="0 0 700 240"></svg></div>
+  </div>
+
+  <div class="ranking-panel animate-in delay-6">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Top Mensagens</div>
+        <div class="panel-subtitle">Maior taxa de conversão no período</div>
+      </div>
+    </div>
+    <div id="rankingList"></div>
+  </div>
+
   <div class="table-panel animate-in delay-7">
-    <div class="panel-header"><div><div class="panel-title">Detalhamento das Ações</div><div class="panel-subtitle">Todas as ações de CRM do período</div></div></div>
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Detalhamento das Ações</div>
+        <div class="panel-subtitle">Todas as ações de CRM do período</div>
+      </div>
+    </div>
     <table class="crm-table">
-      <thead><tr><th>Ação</th><th>Marca</th><th>Tipo</th><th>Fonte</th><th>Status</th><th>Enviadas</th><th>Entregues</th><th>Conversões</th><th>Taxa Conv.</th><th>Texto Enviado</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Ação / Modelo</th>
+          <th>Marca</th>
+          <th>Data</th>
+          <th>Enviadas</th>
+          <th>Entregues</th>
+          <th>Cliques</th>
+          <th>Taxa Conv.</th>
+          <th>Texto Enviado</th>
+        </tr>
+      </thead>
       <tbody id="tableBody"></tbody>
     </table>
   </div>
-  <div class="donut-section animate-in delay-7"><div class="panel-header"><div><div class="panel-title">Distribuição por Canal</div><div class="panel-subtitle">Proporção entre canais de ação</div></div></div><div class="donut-layout"><svg class="donut-svg" id="donutChart" viewBox="0 0 180 180"></svg><div id="donutLegend" class="donut-legend"></div></div></div>
-  <div class="brand-breakdown animate-in delay-8"><div class="panel-header"><div><div class="panel-title">Performance por Marca</div><div class="panel-subtitle">Conversões relativas</div></div></div><div id="brandBars"></div></div>
+
+  <div class="brand-breakdown animate-in delay-7">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Performance por Marca</div>
+        <div class="panel-subtitle">Cliques por marca no período</div>
+      </div>
+    </div>
+    <div id="brandBars"></div>
+  </div>
+
   <div class="insights-panel animate-in delay-8">
-    <div class="insight-card" id="insight1"><div class="insight-icon">💡</div><div class="insight-title">—</div><div class="insight-text">—</div></div>
-    <div class="insight-card" id="insight2"><div class="insight-icon">🏆</div><div class="insight-title">—</div><div class="insight-text">—</div></div>
-    <div class="insight-card" id="insight3"><div class="insight-icon">🎯</div><div class="insight-title">—</div><div class="insight-text">—</div></div>
+    <div class="insight-card" id="insight1">
+      <div class="insight-icon">💡</div>
+      <div class="insight-title">—</div>
+      <div class="insight-text">—</div>
+    </div>
+    <div class="insight-card" id="insight2">
+      <div class="insight-icon">🏆</div>
+      <div class="insight-title">—</div>
+      <div class="insight-text">—</div>
+    </div>
+    <div class="insight-card" id="insight3">
+      <div class="insight-icon">🎯</div>
+      <div class="insight-title">—</div>
+      <div class="insight-text">—</div>
+    </div>
   </div>
 </main>
 
@@ -163,15 +244,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════
-// ⚙️  CONFIGURAÇÃO — substitua pela URL do seu Google Apps Script
-// Instruções completas no arquivo GUIA.md
+// ⚙️  CONFIGURAÇÃO — URL do Google Apps Script
 // ══════════════════════════════════════════════════════════════════════════
 var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjM9Eyelg9_1NedNfqBS9RJ_pTA78KLwujC7DkgzwNyB7dGNykWslZ4ajqqUr3bfIG/exec";
 // ══════════════════════════════════════════════════════════════════════════
 
 var DATA = { config: {}, marcas: [], acoes: [] };
-var TC = { "E-mail": "#6C5CE7", "Push": "#00D68F", "SMS": "#FECA57", "WhatsApp": "#48DBFB" };
-var cB = "all", cW = "all";
+var cB = "all";       // filtro de marca ativo
+var cDI = "";         // filtro data início
+var cDF = "";         // filtro data fim
 
 // ─── Busca dados do Apps Script ───────────────────────────────────────────
 function carregarDados() {
@@ -180,7 +261,6 @@ function carregarDados() {
     esconderLoading();
     return;
   }
-
   fetch(APPS_SCRIPT_URL)
     .then(function(res) {
       if (!res.ok) throw new Error("Erro HTTP " + res.status);
@@ -193,7 +273,7 @@ function carregarDados() {
       esconderLoading();
     })
     .catch(function(err) {
-      mostrarErro("Não foi possível carregar os dados: " + err.message + ". Verifique se a URL do Apps Script está correta.");
+      mostrarErro("Não foi possível carregar os dados: " + err.message);
       esconderLoading();
     });
 }
@@ -208,15 +288,28 @@ function esconderLoading() {
   document.getElementById("loadingOverlay").classList.add("hidden");
 }
 
-// ─── Filtros ──────────────────────────────────────────────────────────────
+// ─── Filtro de data ───────────────────────────────────────────────────────
+function aplicarFiltroData() {
+  cDI = document.getElementById("dataInicio").value;
+  cDF = document.getElementById("dataFim").value;
+  renderAll();
+}
+
+// ─── Filtro de dados ──────────────────────────────────────────────────────
 function gF() {
   return DATA.acoes.filter(function(a) {
-    return (cB === "all" || a.marca_id === cB) && (cW === "all" || a.semana === cW);
+    var passaMarca = (cB === "all" || a.marca_id === cB);
+    var passaData  = true;
+    if (cDI && a.data) passaData = passaData && (a.data >= cDI);
+    if (cDF && a.data) passaData = passaData && (a.data <= cDF);
+    return passaMarca && passaData;
   });
 }
+
 function gM(id) {
   return DATA.marcas.find(function(m) { return m.marca_id === id; }) || { nome: id, cor: "#888" };
 }
+
 function fmt(n) {
   if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
   if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
@@ -224,20 +317,22 @@ function fmt(n) {
 }
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────
+// Taxa de conversão = Cliques (exceto "Parar promoções") / Entregues * 100
 function uKPIs() {
   var d = gF();
-  var tA = d.length;
-  var env = d.reduce(function(s, a) { return s + (a.envios || 0); }, 0);
-  var ent = d.reduce(function(s, a) { return s + (a.aberturas || 0); }, 0);
-  var conv = d.reduce(function(s, a) { return s + (a.conversoes || 0); }, 0);
-  var taxa = env > 0 ? (conv / env * 100).toFixed(1) : "0.0";
-  var taxaEnt = env > 0 ? (ent / env * 100).toFixed(1) : "0.0";
+  var tA   = d.length;
+  var env  = d.reduce(function(s, a) { return s + (a.enviadas || 0); }, 0);
+  var ent  = d.reduce(function(s, a) { return s + (a.entregues || 0); }, 0);
+  var cli  = d.reduce(function(s, a) { return s + (a.cliques || 0); }, 0);
+  var taxa = ent > 0 ? (cli / ent * 100).toFixed(1) : "0.0";
+
   var p = DATA.config.mes_anterior || {};
 
-  sKPI("kpi-acoes",    tA,       p.total_acoes    ? ((tA - p.total_acoes) / p.total_acoes * 100).toFixed(0) : null);
-  sKPI("kpi-alcance",  fmt(env), p.alcance_total  ? ((env - p.alcance_total) / p.alcance_total * 100).toFixed(0) : null);
-  sKPI("kpi-conversao", taxa + "%", p.taxa_conversao ? (taxa - p.taxa_conversao).toFixed(1) : null, true);
-  sKPI("kpi-entrega",  taxaEnt + "%", null);
+  sKPI("kpi-acoes",     tA,          p.total_acoes    ? ((tA - p.total_acoes) / p.total_acoes * 100).toFixed(0) : null);
+  sKPI("kpi-enviadas",  fmt(env),    p.total_enviadas ? ((env - p.total_enviadas) / p.total_enviadas * 100).toFixed(0) : null);
+  sKPI("kpi-entregues", fmt(ent),    p.total_entregues? ((ent - p.total_entregues) / p.total_entregues * 100).toFixed(0) : null);
+  sKPI("kpi-cliques",   fmt(cli),    p.total_cliques  ? ((cli - p.total_cliques) / p.total_cliques * 100).toFixed(0) : null);
+  sKPI("kpi-conversao", taxa + "%",  p.taxa_conversao ? (parseFloat(taxa) - p.taxa_conversao).toFixed(1) : null, true);
 }
 
 function sKPI(id, val, ch, pp) {
@@ -245,26 +340,36 @@ function sKPI(id, val, ch, pp) {
   el.querySelector(".kpi-value").textContent = val;
   var c = el.querySelector(".kpi-change");
   if (ch === null || ch === "NaN" || ch === "Infinity") {
-    c.className = "kpi-change neutral"; c.textContent = "Primeiro mês"; return;
+    c.className = "kpi-change neutral"; c.textContent = "Primeiro período"; return;
   }
   var up = parseFloat(ch) >= 0;
   c.className = "kpi-change " + (up ? "up" : "down");
   c.textContent = (up ? "↑ +" : "↓ ") + ch + (pp ? " p.p." : "%");
 }
 
-// ─── Ranking ──────────────────────────────────────────────────────────────
+// ─── Ranking (por taxa de conversão) ─────────────────────────────────────
 function uRank() {
-  var d = gF().filter(function(a) { return a.conversoes > 0; })
-    .sort(function(a, b) { return b.conversoes - a.conversoes; }).slice(0, 5);
+  var d = gF().filter(function(a) { return a.entregues > 0; })
+    .map(function(a) {
+      return { nome: a.nome, marca_id: a.marca_id, cliques: a.cliques || 0, entregues: a.entregues || 0,
+               taxa: a.entregues > 0 ? (a.cliques / a.entregues * 100) : 0 };
+    })
+    .sort(function(a, b) { return b.taxa - a.taxa; }).slice(0, 5);
+
   document.getElementById("rankingList").innerHTML = d.length
     ? d.map(function(a, i) {
         var m = gM(a.marca_id);
         var cls = i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "";
-        return '<div class="rank-item"><span class="rank-num ' + cls + '">' + (i + 1) + '</span>' +
-          '<div class="rank-info"><div class="rank-name">' + a.nome + '</div>' +
-          '<div class="rank-brand">' + m.nome + ' · ' + a.tipo + '</div></div>' +
-          '<div class="rank-result"><div class="rank-value">' + fmt(a.conversoes) + '</div>' +
-          '<div class="rank-metric">conversões</div></div></div>';
+        return '<div class="rank-item">' +
+          '<span class="rank-num ' + cls + '">' + (i + 1) + '</span>' +
+          '<div class="rank-info">' +
+            '<div class="rank-name">' + a.nome + '</div>' +
+            '<div class="rank-brand">' + m.nome + '</div>' +
+          '</div>' +
+          '<div class="rank-result">' +
+            '<div class="rank-value">' + a.taxa.toFixed(1) + '%</div>' +
+            '<div class="rank-metric">conversão</div>' +
+          '</div></div>';
       }).join("")
     : '<p style="color:var(--text-dim);font-size:13px;padding:20px 0">Sem dados ainda</p>';
 }
@@ -272,125 +377,156 @@ function uRank() {
 // ─── Tabela ───────────────────────────────────────────────────────────────
 function uTable() {
   var d = gF();
-  var mx = Math.max.apply(null, d.map(function(a) { return a.conversoes || 0; }).concat([1]));
+  var mx = Math.max.apply(null, d.map(function(a) { return a.cliques || 0; }).concat([1]));
   document.getElementById("tableBody").innerHTML = d.map(function(a) {
     var m = gM(a.marca_id);
-    var tx = a.envios > 0 ? (a.conversoes / a.envios * 100).toFixed(1) : "0.0";
-    var bW = (a.conversoes || 0) / mx * 100;
+    var tx = a.entregues > 0 ? (a.cliques / a.entregues * 100).toFixed(1) : "0.0";
+    var bW = (a.cliques || 0) / mx * 100;
     var textoExibe = a.texto_envio
-      ? '<span class="texto-envio" title="Clique para ver" onclick="abrirModal(\'' + encodeURIComponent(a.texto_envio) + '\')">' + a.texto_envio.substring(0, 40) + (a.texto_envio.length > 40 ? "…" : "") + '</span>'
+      ? '<span class="texto-envio" title="Clique para ver" onclick="abrirModal(\'' + encodeURIComponent(a.texto_envio) + '\')">' +
+          a.texto_envio.substring(0, 40) + (a.texto_envio.length > 40 ? "…" : "") + '</span>'
       : '<span style="color:var(--text-dim)">—</span>';
+    var dataExibe = a.data ? a.data.split("-").reverse().join("/") : "—";
     return '<tr>' +
       '<td class="action-name">' + a.nome + '</td>' +
       '<td><span style="color:' + m.cor + '">' + m.nome + '</span></td>' +
-      '<td>' + a.tipo + '</td>' +
-      '<td>' + (a.fonte || "—") + '</td>' +
-      '<td><span class="status-tag ' + a.status + '">' + a.status.charAt(0).toUpperCase() + a.status.slice(1) + '</span></td>' +
-      '<td>' + fmt(a.envios || 0) + '</td>' +
-      '<td>' + fmt(a.aberturas || 0) + '</td>' +
-      '<td><div class="bar-cell"><span>' + fmt(a.conversoes || 0) + '</span>' +
-        '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + bW + '%;background:' + (TC[a.tipo] || "#888") + '"></div></div></div></td>' +
+      '<td>' + dataExibe + '</td>' +
+      '<td>' + fmt(a.enviadas || 0) + '</td>' +
+      '<td>' + fmt(a.entregues || 0) + '</td>' +
+      '<td><div class="bar-cell"><span>' + fmt(a.cliques || 0) + '</span>' +
+        '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + bW + '%;background:var(--green)"></div></div></div></td>' +
       '<td><strong>' + tx + '%</strong></td>' +
       '<td>' + textoExibe + '</td>' +
       '</tr>';
   }).join("");
 }
 
-// ─── Gráfico de linha ─────────────────────────────────────────────────────
+// ─── Gráfico de linha por data ────────────────────────────────────────────
 function uLine() {
   var svg = document.getElementById("lineChart"); svg.innerHTML = "";
-  var wk = ["S1","S2","S3","S4"], lb = ["Semana 1","Semana 2","Semana 3","Semana 4"];
-  var fl = cB === "all" ? DATA.acoes : DATA.acoes.filter(function(a) { return a.marca_id === cB; });
-  var eW = wk.map(function(w) { return fl.filter(function(a) { return a.semana === w; }).reduce(function(s, a) { return s + (a.envios || 0); }, 0); });
-  var cWk = wk.map(function(w) { return fl.filter(function(a) { return a.semana === w; }).reduce(function(s, a) { return s + (a.conversoes || 0); }, 0); });
-  var mV = Math.max.apply(null, eW.concat([1]));
-  var p = { t: 20, r: 30, b: 35, l: 60 }, W = 700, H = 240, cWd = W - p.l - p.r, cH = H - p.t - p.b;
+  var fl = gF().filter(function(a) { return a.data; });
+  if (!fl.length) return;
+
+  // Agrupa por data
+  var mapaData = {};
+  fl.forEach(function(a) {
+    if (!mapaData[a.data]) mapaData[a.data] = { env: 0, cli: 0 };
+    mapaData[a.data].env += (a.enviadas || 0);
+    mapaData[a.data].cli += (a.cliques || 0);
+  });
+
+  var datas = Object.keys(mapaData).sort();
+  if (datas.length < 2) return;
+
+  var envs = datas.map(function(d) { return mapaData[d].env; });
+  var clis = datas.map(function(d) { return mapaData[d].cli; });
+  var mV = Math.max.apply(null, envs.concat([1]));
+
+  var p = { t: 20, r: 30, b: 40, l: 60 }, W = 700, H = 240;
+  var cWd = W - p.l - p.r, cH = H - p.t - p.b;
+  var n = datas.length;
+
+  // Grid
   for (var i = 0; i <= 4; i++) {
     var y = p.t + (cH / 4) * i;
-    svg.innerHTML += '<line x1="' + p.l + '" y1="' + y + '" x2="' + (W - p.r) + '" y2="' + y + '" stroke="#2A2F3A" stroke-dasharray="4 4"/>' +
-      '<text x="' + (p.l - 10) + '" y="' + (y + 4) + '" fill="#5A6173" font-size="10" text-anchor="end" font-family="DM Sans">' + fmt(mV - (mV / 4) * i) + '</text>';
+    svg.innerHTML += '<line x1="' + p.l + '" y1="' + y + '" x2="' + (W - p.r) + '" y2="' + y +
+      '" stroke="#2A2F3A" stroke-dasharray="4 4"/>' +
+      '<text x="' + (p.l - 10) + '" y="' + (y + 4) + '" fill="#5A6173" font-size="10" text-anchor="end" font-family="DM Sans">' +
+      fmt(mV - (mV / 4) * i) + '</text>';
   }
-  wk.forEach(function(_, i) { svg.innerHTML += '<text x="' + (p.l + (cWd / 3) * i) + '" y="' + (H - 8) + '" fill="#5A6173" font-size="11" text-anchor="middle" font-family="DM Sans">' + lb[i] + '</text>'; });
-  var pts = eW.map(function(v, i) { return { x: p.l + (cWd / 3) * i, y: p.t + cH - (v / mV) * cH }; });
+
+  // Labels de data (máx 6 labels)
+  var step = Math.ceil(n / 6);
+  datas.forEach(function(d, i) {
+    if (i % step !== 0 && i !== n - 1) return;
+    var x = p.l + (cWd / (n - 1)) * i;
+    var label = d.substring(5); // MM-DD
+    svg.innerHTML += '<text x="' + x + '" y="' + (H - 6) + '" fill="#5A6173" font-size="10" text-anchor="middle" font-family="DM Sans">' + label + '</text>';
+  });
+
+  // Linha de envios
   svg.innerHTML += '<defs><linearGradient id="aG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6C5CE7" stop-opacity=".4"/><stop offset="100%" stop-color="#6C5CE7" stop-opacity="0"/></linearGradient></defs>';
+  var pts = envs.map(function(v, i) { return { x: p.l + (cWd / (n - 1)) * i, y: p.t + cH - (v / mV) * cH }; });
   svg.innerHTML += '<path d="M' + pts[0].x + ',' + (p.t + cH) + ' ' + pts.map(function(q) { return 'L' + q.x + ',' + q.y; }).join(' ') + ' L' + pts[pts.length - 1].x + ',' + (p.t + cH) + ' Z" fill="url(#aG)" opacity=".3"/>';
   svg.innerHTML += '<path d="' + pts.map(function(q, i) { return (i ? 'L' : 'M') + q.x + ',' + q.y; }).join(' ') + '" fill="none" stroke="#6C5CE7" stroke-width="2.5" stroke-linecap="round"/>';
-  pts.forEach(function(q) { svg.innerHTML += '<circle cx="' + q.x + '" cy="' + q.y + '" r="4" fill="#6C5CE7" stroke="#0C0F14" stroke-width="2"/>'; });
-  var cp = cWk.map(function(v, i) { return { x: p.l + (cWd / 3) * i, y: p.t + cH - (v / mV) * cH }; });
+
+  // Linha de cliques
+  var mVC = Math.max.apply(null, clis.concat([1]));
+  var cp = clis.map(function(v, i) { return { x: p.l + (cWd / (n - 1)) * i, y: p.t + cH - (v / mV) * cH }; });
   svg.innerHTML += '<path d="' + cp.map(function(q, i) { return (i ? 'L' : 'M') + q.x + ',' + q.y; }).join(' ') + '" fill="none" stroke="#00D68F" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4"/>';
   cp.forEach(function(q) { svg.innerHTML += '<circle cx="' + q.x + '" cy="' + q.y + '" r="4" fill="#00D68F" stroke="#0C0F14" stroke-width="2"/>'; });
-  svg.innerHTML += '<circle cx="' + (W - 180) + '" cy="12" r="4" fill="#6C5CE7"/><text x="' + (W - 170) + '" y="16" fill="#8A91A0" font-size="11" font-family="DM Sans">Envios</text>' +
-    '<circle cx="' + (W - 110) + '" cy="12" r="4" fill="#00D68F"/><text x="' + (W - 100) + '" y="16" fill="#8A91A0" font-size="11" font-family="DM Sans">Conversões</text>';
-}
 
-// ─── Donut ────────────────────────────────────────────────────────────────
-function uDonut() {
-  var d = gF(), types = ["E-mail","Push","SMS","WhatsApp"];
-  var counts = types.map(function(t) { return d.filter(function(a) { return a.tipo === t; }).reduce(function(s, a) { return s + (a.conversoes || 0); }, 0); });
-  var total = counts.reduce(function(s, v) { return s + v; }, 0) || 1;
-  var svg = document.getElementById("donutChart"), cx = 90, cy = 90, r = 70, ir = 45;
-  var angle = -90, paths = "";
-  counts.forEach(function(count, i) {
-    var pct = count / total; if (!pct) return;
-    var sw = pct * 360, sR = angle * Math.PI / 180, eR = (angle + sw) * Math.PI / 180;
-    var x1 = cx + r * Math.cos(sR), y1 = cy + r * Math.sin(sR), x2 = cx + r * Math.cos(eR), y2 = cy + r * Math.sin(eR);
-    var x3 = cx + ir * Math.cos(eR), y3 = cy + ir * Math.sin(eR), x4 = cx + ir * Math.cos(sR), y4 = cy + ir * Math.sin(sR);
-    paths += '<path d="M' + x1 + ',' + y1 + ' A' + r + ',' + r + ' 0 ' + (sw > 180 ? 1 : 0) + ',1 ' + x2 + ',' + y2 + ' L' + x3 + ',' + y3 + ' A' + ir + ',' + ir + ' 0 ' + (sw > 180 ? 1 : 0) + ',0 ' + x4 + ',' + y4 + ' Z" fill="' + TC[types[i]] + '" opacity=".85"/>';
-    angle += sw;
-  });
-  var dispTotal = counts.every(function(c) { return c === 0; }) ? 0 : total;
-  paths += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" fill="#E8ECF4" font-family="Fraunces" font-size="20" font-weight="500">' + fmt(dispTotal) + '</text>' +
-    '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" fill="#5A6173" font-size="9" font-family="DM Sans">conversões</text>';
-  svg.innerHTML = paths;
-  document.getElementById("donutLegend").innerHTML = types.map(function(t, i) {
-    return '<div class="legend-item"><span class="legend-dot" style="background:' + TC[t] + '"></span><span>' + t + '</span><span class="legend-value">' + fmt(counts[i]) + '</span></div>';
-  }).join("");
+  // Legenda
+  svg.innerHTML += '<circle cx="' + (W - 180) + '" cy="12" r="4" fill="#6C5CE7"/>' +
+    '<text x="' + (W - 170) + '" y="16" fill="#8A91A0" font-size="11" font-family="DM Sans">Envios</text>' +
+    '<circle cx="' + (W - 110) + '" cy="12" r="4" fill="#00D68F"/>' +
+    '<text x="' + (W - 100) + '" y="16" fill="#8A91A0" font-size="11" font-family="DM Sans">Cliques</text>';
 }
 
 // ─── Barras por marca ─────────────────────────────────────────────────────
 function uBrand() {
-  var d = cW === "all" ? DATA.acoes : DATA.acoes.filter(function(a) { return a.semana === cW; });
-  var convs = DATA.marcas.map(function(m) { return d.filter(function(a) { return a.marca_id === m.marca_id; }).reduce(function(s, a) { return s + (a.conversoes || 0); }, 0); });
-  var mx = Math.max.apply(null, convs.concat([1]));
+  var d = gF();
+  var cliques = DATA.marcas.map(function(m) {
+    return d.filter(function(a) { return a.marca_id === m.marca_id; })
+            .reduce(function(s, a) { return s + (a.cliques || 0); }, 0);
+  });
+  var mx = Math.max.apply(null, cliques.concat([1]));
   document.getElementById("brandBars").innerHTML = DATA.marcas.map(function(m, i) {
-    return '<div class="brand-row"><span class="brand-dot" style="background:' + m.cor + '"></span>' +
+    return '<div class="brand-row">' +
+      '<span class="brand-dot" style="background:' + m.cor + '"></span>' +
       '<span class="brand-label">' + m.nome + '</span>' +
-      '<div class="brand-bar-track"><div class="brand-bar-fill" style="width:' + (convs[i] / mx * 100).toFixed(0) + '%;background:' + m.cor + '"></div></div>' +
-      '<span class="brand-pct">' + fmt(convs[i]) + '</span></div>';
+      '<div class="brand-bar-track"><div class="brand-bar-fill" style="width:' + (cliques[i] / mx * 100).toFixed(0) + '%;background:' + m.cor + '"></div></div>' +
+      '<span class="brand-pct">' + fmt(cliques[i]) + '</span>' +
+    '</div>';
   }).join("");
 }
 
 // ─── Insights ─────────────────────────────────────────────────────────────
 function uInsights() {
   var d = gF();
-  if (!d.length || d.every(function(a) { return !a.conversoes; })) {
+  if (!d.length || d.every(function(a) { return !a.cliques; })) {
     ["insight1","insight2","insight3"].forEach(function(id) {
       document.getElementById(id).querySelector(".insight-title").textContent = "Aguardando dados";
       document.getElementById(id).querySelector(".insight-text").textContent = "Os insights serão gerados automaticamente quando os dados forem preenchidos na planilha.";
     }); return;
   }
-  var types = ["E-mail","Push","SMS","WhatsApp"];
-  var tp = types.map(function(t) {
-    var items = d.filter(function(a) { return a.tipo === t; });
-    var e = items.reduce(function(s, a) { return s + (a.envios || 0); }, 0);
-    var c = items.reduce(function(s, a) { return s + (a.conversoes || 0); }, 0);
-    return { tipo: t, taxa: e > 0 ? c / e * 100 : 0, conv: c };
-  }).filter(function(t) { return t.conv > 0; }).sort(function(a, b) { return b.taxa - a.taxa; });
-  if (tp.length) {
-    var b = tp[0];
-    document.getElementById("insight1").querySelector(".insight-title").textContent = b.tipo + " lidera em conversão";
-    document.getElementById("insight1").querySelector(".insight-text").innerHTML = 'O canal <span class="insight-highlight">' + b.tipo + '</span> teve taxa de <span class="insight-highlight">' + b.taxa.toFixed(1) + '%</span>, superando os demais. Considere aumentar o volume neste canal.';
+
+  // Melhor ação por taxa de conversão
+  var comEntrega = d.filter(function(a) { return a.entregues > 0; });
+  var best = comEntrega.slice().sort(function(a, b) {
+    return (b.cliques / b.entregues) - (a.cliques / a.entregues);
+  })[0];
+
+  if (best) {
+    var txBest = (best.cliques / best.entregues * 100).toFixed(1);
+    document.getElementById("insight1").querySelector(".insight-title").textContent = "Melhor taxa de conversão";
+    document.getElementById("insight1").querySelector(".insight-text").innerHTML =
+      '"<span class="insight-highlight">' + best.nome + '</span>" converteu <span class="insight-highlight">' + txBest + '%</span> das entregas. Considere replicar o modelo desta mensagem.';
   }
-  var best = d.slice().sort(function(a, b) { return (b.conversoes || 0) - (a.conversoes || 0); })[0];
-  if (best && best.conversoes) {
-    var tx = (best.conversoes / best.envios * 100).toFixed(1);
-    document.getElementById("insight2").querySelector(".insight-title").textContent = "Ação destaque do período";
-    document.getElementById("insight2").querySelector(".insight-text").innerHTML = '"<span class="insight-highlight">' + best.nome + '</span>" gerou ' + fmt(best.conversoes) + ' conversões (' + tx + '%). Timing e segmentação merecem ser replicados.';
+
+  // Ação com mais cliques absolutos
+  var topCliques = d.slice().sort(function(a, b) { return (b.cliques || 0) - (a.cliques || 0); })[0];
+  if (topCliques && topCliques.cliques) {
+    var m = gM(topCliques.marca_id);
+    document.getElementById("insight2").querySelector(".insight-title").textContent = "Maior volume de cliques";
+    document.getElementById("insight2").querySelector(".insight-text").innerHTML =
+      '"<span class="insight-highlight">' + topCliques.nome + '</span>" (' + m.nome + ') gerou <span class="insight-highlight">' + fmt(topCliques.cliques) + ' cliques</span> no período.';
   }
-  if (tp.length > 1) {
-    var w = tp[tp.length - 1];
-    document.getElementById("insight3").querySelector(".insight-title").textContent = "Oportunidade de melhoria";
-    document.getElementById("insight3").querySelector(".insight-text").innerHTML = 'O canal <span class="insight-highlight">' + w.tipo + '</span> apresenta taxa de ' + w.taxa.toFixed(1) + '%, a menor entre os ativos. Revise copy, segmentação ou horário de disparo.';
+
+  // Marca com melhor taxa média
+  var marcasComDados = DATA.marcas.map(function(m) {
+    var acoesM = d.filter(function(a) { return a.marca_id === m.marca_id && a.entregues > 0; });
+    if (!acoesM.length) return null;
+    var totalEnt = acoesM.reduce(function(s, a) { return s + a.entregues; }, 0);
+    var totalCli = acoesM.reduce(function(s, a) { return s + a.cliques; }, 0);
+    return { nome: m.nome, taxa: totalEnt > 0 ? totalCli / totalEnt * 100 : 0 };
+  }).filter(Boolean).sort(function(a, b) { return b.taxa - a.taxa; });
+
+  if (marcasComDados.length > 0) {
+    var topMarca = marcasComDados[0];
+    document.getElementById("insight3").querySelector(".insight-title").textContent = "Marca destaque";
+    document.getElementById("insight3").querySelector(".insight-text").innerHTML =
+      '<span class="insight-highlight">' + topMarca.nome + '</span> lidera com taxa média de <span class="insight-highlight">' + topMarca.taxa.toFixed(1) + '%</span> de conversão no período.';
   }
 }
 
@@ -414,17 +550,25 @@ function chkEmpty() {
 }
 
 // ─── Render all ───────────────────────────────────────────────────────────
-function renderAll() { chkEmpty(); uKPIs(); uRank(); uTable(); uLine(); uDonut(); uBrand(); uInsights(); }
+function renderAll() { chkEmpty(); uKPIs(); uRank(); uTable(); uLine(); uBrand(); uInsights(); }
 
 // ─── Inicialização ────────────────────────────────────────────────────────
 function inicializar() {
   var c = DATA.config;
   document.getElementById("badgeMes").textContent = c.mes_atual || "—";
-  document.getElementById("periodDisplay").textContent = "📅 " + (c.data_inicio || "—") + " — " + (c.data_fim || "—");
   document.getElementById("footerUpdate").textContent = "Última atualização: " + (c.ultima_atualizacao || "—");
 
+  // Preenche os campos de data com o período da planilha (se disponível)
+  if (c.data_inicio && !document.getElementById("dataInicio").value) {
+    document.getElementById("dataInicio").value = c.data_inicio;
+    cDI = c.data_inicio;
+  }
+  if (c.data_fim && !document.getElementById("dataFim").value) {
+    document.getElementById("dataFim").value = c.data_fim;
+    cDF = c.data_fim;
+  }
+
   var fb = document.getElementById("filtersBar");
-  // Remove chips antigos (exceto "Todas")
   fb.querySelectorAll(".brand-chip:not([data-brand='all'])").forEach(function(el) { el.remove(); });
 
   DATA.marcas.forEach(function(m) {
@@ -442,18 +586,10 @@ function inicializar() {
     fb.querySelector("[data-brand='all']").classList.add("active"); cB = "all"; renderAll();
   });
 
-  document.querySelectorAll(".week-btn").forEach(function(b) {
-    b.addEventListener("click", function() {
-      document.querySelectorAll(".week-btn").forEach(function(x) { x.classList.remove("active"); });
-      b.classList.add("active"); cW = b.dataset.week; renderAll();
-    });
-  });
-
   renderAll();
 }
 
-// ─── Marcas padrão (usadas enquanto os dados da planilha não carregam) ────
-// Estas marcas são sobrescritas pelos dados do Google Sheets após o carregamento.
+// ─── Marcas padrão ────────────────────────────────────────────────────────
 DATA.marcas = [
   { marca_id: "marca-a", nome: "GMSP",           cor: "#6C5CE7" },
   { marca_id: "marca-b", nome: "GMBSB",          cor: "#00D68F" },
@@ -469,8 +605,6 @@ DATA.marcas = [
 
 // ─── Start ────────────────────────────────────────────────────────────────
 carregarDados();
-
-// Recarrega automaticamente a cada 60 minutos
 setInterval(carregarDados, 60 * 60 * 1000);
 </script>
 </body>
