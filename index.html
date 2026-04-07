@@ -71,6 +71,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .crm-table tbody td{padding:14px 12px;font-size:13px;color:var(--text-muted);border-bottom:1px solid rgba(42,47,58,.5)}
 .crm-table .action-name{font-weight:600;color:var(--text)}
 .bar-cell{display:flex;align-items:center;gap:8px}.mini-bar{width:80px;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}.mini-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+/* Badge de tipo de ação */
+.tipo-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:.4px;white-space:nowrap}
+.tipo-badge.whatsapp{background:rgba(0,214,143,.15);color:#00D68F;border:1px solid rgba(0,214,143,.3)}
+.tipo-badge.sms{background:rgba(72,219,251,.15);color:#48DBFB;border:1px solid rgba(72,219,251,.3)}
+.tipo-badge.email{background:rgba(254,202,87,.15);color:#FECA57;border:1px solid rgba(254,202,87,.3)}
+.tipo-badge.outro{background:rgba(162,155,254,.15);color:#A29BFE;border:1px solid rgba(162,155,254,.3)}
 /* Célula de texto do envio */
 .texto-envio{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text-muted)}
 .texto-envio:hover{color:var(--accent-light)}
@@ -196,6 +202,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <tr>
           <th>Ação / Modelo</th>
           <th>Marca</th>
+          <th>Tipo</th>
           <th>Data</th>
           <th>Enviadas</th>
           <th>Entregues</th>
@@ -316,6 +323,19 @@ function fmt(n) {
   return String(n);
 }
 
+// Gera badge HTML para o tipo de ação
+function tipoBadge(tipo) {
+  var t = (tipo || "WhatsApp").trim();
+  var lower = t.toLowerCase();
+  var cls, icon;
+  if (lower.indexOf("whatsapp") > -1) { cls = "whatsapp"; icon = "💬"; }
+  else if (lower === "sms")            { cls = "sms";      icon = "📱"; }
+  else if (lower.indexOf("mail") > -1 || lower.indexOf("e-mail") > -1 || lower.indexOf("email") > -1)
+                                       { cls = "email";    icon = "✉️"; }
+  else                                 { cls = "outro";    icon = "📢"; }
+  return '<span class="tipo-badge ' + cls + '">' + icon + ' ' + t + '</span>';
+}
+
 // ─── KPIs ─────────────────────────────────────────────────────────────────
 // Taxa de conversão = Cliques (exceto "Parar promoções") / Entregues * 100
 function uKPIs() {
@@ -351,7 +371,7 @@ function sKPI(id, val, ch, pp) {
 function uRank() {
   var d = gF().filter(function(a) { return a.entregues > 0; })
     .map(function(a) {
-      return { nome: a.nome, marca_id: a.marca_id, cliques: a.cliques || 0, entregues: a.entregues || 0,
+      return { nome: a.nome, marca_id: a.marca_id, tipo: a.tipo || "WhatsApp", cliques: a.cliques || 0, entregues: a.entregues || 0,
                taxa: a.entregues > 0 ? (a.cliques / a.entregues * 100) : 0 };
     })
     .sort(function(a, b) { return b.taxa - a.taxa; }).slice(0, 5);
@@ -364,7 +384,10 @@ function uRank() {
           '<span class="rank-num ' + cls + '">' + (i + 1) + '</span>' +
           '<div class="rank-info">' +
             '<div class="rank-name">' + a.nome + '</div>' +
-            '<div class="rank-brand">' + m.nome + '</div>' +
+            '<div class="rank-brand" style="display:flex;align-items:center;gap:6px;margin-top:3px">' +
+              '<span>' + m.nome + '</span>' +
+              tipoBadge(a.tipo) +
+            '</div>' +
           '</div>' +
           '<div class="rank-result">' +
             '<div class="rank-value">' + a.taxa.toFixed(1) + '%</div>' +
@@ -390,6 +413,7 @@ function uTable() {
     return '<tr>' +
       '<td class="action-name">' + a.nome + '</td>' +
       '<td><span style="color:' + m.cor + '">' + m.nome + '</span></td>' +
+      '<td>' + tipoBadge(a.tipo) + '</td>' +
       '<td>' + dataExibe + '</td>' +
       '<td>' + fmt(a.enviadas || 0) + '</td>' +
       '<td>' + fmt(a.entregues || 0) + '</td>' +
